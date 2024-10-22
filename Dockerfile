@@ -9,14 +9,10 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     locales \
     zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
     git \
-    curl
-
-# Instalar extensões do PHP necessárias
-RUN docker-php-ext-install pdo pdo_mysql
+    curl \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -27,8 +23,11 @@ WORKDIR /var/www
 # Copiar os arquivos do projeto para o container
 COPY . .
 
+# Limpar o cache do Composer
+RUN composer clear-cache
+
 # Instalar dependências do Laravel
-RUN composer install --no-scripts --no-autoloader
+RUN composer install
 
 # Definir permissões
 RUN chown -R www-data:www-data /var/www \
