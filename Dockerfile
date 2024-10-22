@@ -1,36 +1,58 @@
-# Usar uma imagem base do PHP com as extensões mais comuns já instaladas
-FROM php:8.1-fpm
+# Use a imagem base do PHP
+FROM php:8.2-fpm-alpine
 
-# Instalar dependências do sistema e extensões PHP necessárias
-RUN apt-get update && apt-get install -y \
+# Defina o diretório de trabalho dentro do container
+WORKDIR /var/www/html
+
+# Instale dependências do sistema necessárias para Laravel
+RUN apk --no-cache add \
     git \
     curl \
-    zip \
-    unzip \
     libpng-dev \
-    libonig-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    libxpm-dev \
+    libfreetype-dev \
     libxml2-dev \
+    zip \
     libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+    unzip \
+    bash \
+    postgresql-dev \
+    oniguruma-dev
 
-# Instalar o Composer
+# Instale extensões PHP necessárias
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    pdo_pgsql \
+    mbstring \
+    zip \
+    exif \
+    pcntl \
+    bcmath \
+    gd
+
+# Instale o Composer globalmente
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Definir diretório de trabalho
-WORKDIR /var/www
-
-# Copiar o projeto Laravel para dentro do container
+# Copie os arquivos do projeto para o container
 COPY . .
 
-# Instalar dependências do Laravel via Composer
-RUN composer install --optimize-autoloader --no-dev
+# Dê as permissões adequadas
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Definir permissões corretas para o diretório de storage e cache
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage \
-    && chmod -R 755 /var/www/bootstrap/cache
+# Instale as dependências do Laravel
+RUN composer install --optimize-autoloader --no-dev --no-interaction --no-progress
 
-# Expor a porta 9000 (padrão do PHP-FPM)
+# Gere o cache das configurações
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
+
+# Exponha a porta 9000 para comunicação com o Nginx
 EXPOSE 9000
 
 # Comando para iniciar o PHP-FPM
