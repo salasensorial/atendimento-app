@@ -12,7 +12,7 @@ RUN apk --no-cache add \
     libjpeg-turbo-dev \
     libwebp-dev \
     libxpm-dev \
-    libfreetype-dev \
+    freetype-dev \  # Corrigido de libfreetype-dev para freetype-dev
     libxml2-dev \
     zip \
     libzip-dev \
