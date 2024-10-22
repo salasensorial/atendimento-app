@@ -45,13 +45,14 @@ RUN chown -R www-data:www-data /var/www/html \
 # Instale as dependências do Laravel
 RUN composer install --optimize-autoloader --no-dev --no-interaction --no-progress
 
-# Gere o cache das configurações
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Copie o arquivo de script de inicialização
+COPY docker-entrypoint.sh /usr/local/bin/
+
+# Dê permissão de execução ao script
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Exponha a porta 9000 para comunicação com o Nginx
 EXPOSE 9000
 
-# Comando para iniciar o PHP-FPM
-CMD ["php-fpm"]
+# Use o script como entrypoint
+ENTRYPOINT ["docker-entrypoint.sh"]
