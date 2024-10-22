@@ -5,14 +5,12 @@ FROM php:8.2-fpm-alpine
 WORKDIR /var/www/html
 
 # Instale dependências do sistema necessárias para Laravel
-RUN apk --no-cache add \
-    git \
-    curl \
+RUN apk --no-cache add git curl \
     libpng-dev \
     libjpeg-turbo-dev \
     libwebp-dev \
     libxpm-dev \
-    freetype-dev \  # Corrigido de libfreetype-dev para freetype-dev
+    freetype-dev \
     libxml2-dev \
     zip \
     libzip-dev \
