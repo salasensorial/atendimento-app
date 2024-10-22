@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+    && docker-php-ext-install gd pdo pdo_mysql zip
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -27,7 +27,7 @@ COPY . .
 RUN composer clear-cache
 
 # Instalar dependências do Laravel
-RUN composer install
+RUN composer install --no-scripts --no-autoloader --verbose
 
 # Definir permissões
 RUN chown -R www-data:www-data /var/www \
