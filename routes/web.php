@@ -4,11 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\AtendimentoController;
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
+use App\Http\Controllers\CinController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,8 +22,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
-
 Route::get('/cadastrar', [AtendimentoController::class, 'create']);
 
 // Rota para processar o cadastro do atendimento
@@ -40,6 +34,10 @@ Route::get('/cadastrar-cin', function () {
 });
 
 Route::post('/cadastrar-cin', [AtendimentoController::class, 'storeCin']);
+
+
+Route::get('/cin/busca', [CinController::class, 'index'])->name('cin.index');
+
 
 require __DIR__.'/auth.php';
 

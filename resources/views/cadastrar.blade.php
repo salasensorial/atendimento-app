@@ -67,7 +67,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Cadastrar Atendimento</h1>
+        <h2>Cadastrar Atendimento</h2>
 
         @if (session('success'))
             <p class="success-message">{{ session('success') }}</p>
@@ -88,7 +88,7 @@
         </form></br>
 
         <!-- Formulário de Cadastro de CIN -->
-        <h1>Cadastrar CIN</h1>
+        <h2>Cadastrar CIN</h2>
         <form action="/cadastrar-cin" method="POST">
             @csrf
             <input type="text" name="cpf" placeholder="CPF da CIN" required>
